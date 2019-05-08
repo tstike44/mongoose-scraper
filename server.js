@@ -37,7 +37,7 @@ if (process.env.MONDGODB_URI) {
 /*********** End of Database Config *************/
 
 // Routes
-var txt;
+
 // A GET route for scraping the echoJS website
 app.get("/scrape", function (req, res) {
     // First, we grab the body of the html with axios
@@ -77,7 +77,7 @@ app.get("/scrape", function (req, res) {
 
 // Route for getting all Articles from the db
 app.get("/articles", function (req, res) {
-    // TODO: Finish the route so it grabs all of the articles
+   //grab all articles
     db.Article.find({})
         .then(function (dbArticles) {
             res.json(dbArticles)
@@ -86,8 +86,6 @@ app.get("/articles", function (req, res) {
 
 // Route for grabbing a specific Article by id, populate it with it's note
 app.get("/articles/:id", function (req, res) {
-    // TODO
-    // ====
     // Finish the route so it finds one article using the req.params.id,
     // and run the populate method with "note",
     // then responds with the article with the note included
@@ -99,8 +97,7 @@ app.get("/articles/:id", function (req, res) {
 
 // Route for saving/updating an Article's associated Note
 app.post("/articles/:id", function (req, res) {
-    // TODO
-    // ====
+    
     // save the new note that gets posted to the Notes collection
     // then find an article from the req.params.id
     // and update it's "note" property with the _id of the new note
