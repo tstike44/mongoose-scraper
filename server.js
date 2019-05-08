@@ -1,16 +1,13 @@
 const express = require("express");
 const logger = require("morgan");
 const mongoose = require("mongoose");
-
 // Our scraping tools
-// Axios is a promised-based http library, similar to jQuery's Ajax method
-// It works on the client and on the server
 const axios = require("axios");
 const cheerio = require("cheerio");
 
 // Require all models
-// const db = require("./models");
-const db = mongoose.connection;
+const db = require("./models");
+
 
 const PORT = 8080;
 
@@ -19,10 +16,11 @@ const app = express();
 
 // Use morgan logger for logging requests
 app.use(logger("dev"));
-
+// Parse request body as JSON
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 // Make public a static folder
 app.use(express.static("public"));
-
 
 /*********** Database configuration **********/
 
@@ -38,26 +36,16 @@ if (process.env.MONDGODB_URI) {
 }
 /*********** End of Database Config *************/
 
-//show any mongoose errors
-db.on('error', function (err) {
-    console.log('Mongoose Error: ', err);
-});
-
-//once logged in to the db through mongoose log a sucess message
-db.once('open', function () {
-    console.log('Mongoose connection successful.');
-});
-
 // Routes
-
+var txt;
 // A GET route for scraping the echoJS website
 app.get("/scrape", function (req, res) {
     // First, we grab the body of the html with axios
-    axios.get("https://www.reddit.com/r/Showerthoughts/").then(function (response) {
+    axios.get("http://www.nfl.com/news").then(function (response) {
         // Then, we load that into cheerio and save it to $ for a shorthand selector
         const $ = cheerio.load(response.data);
 
-        // Now, we grab every h2 within an article tag, and do the following:
+        // Now, we grab every h3 within an article tag, and do the following:
         $("h3").each(function (i, element) {
             // Save an empty result object
             let result = {};
@@ -125,6 +113,7 @@ app.post("/articles/:id", function (req, res) {
             res.json(noteId)
         })
 });
+
 
 // Start the server
 app.listen(PORT, function () {
